@@ -7,7 +7,9 @@ import {
 import WelcomePage from './components/WelcomePage';
 import RegisterPage from './components/RegisterPage';
 import LoginPage from './components/LoginPage';
-import PreAdmissionsWeeklyView from './components/PreAdmissionsWeeklyView';
+import PreAdmissionsPage from './components/PreAdmissionsPage';
+import AddPossibleAdmission from './components/AddPossibleAdmission';
+import EditPatientPage from './components/EditPatientPage';
 
 function App() {
   return (
@@ -17,7 +19,9 @@ function App() {
           <Route path="/" element={<WelcomePage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/preadmissions" element={<PreAdmissionsWeeklyView />} />
+          <Route path="/pre-admissions" element={<PreAdmissionsPage />} />
+          <Route path="/add-possible-admission" element={<AddPossibleAdmission />} />
+          <Route path="/edit-patient/:patientId" element={<EditPatientPage />} />
           <Route path="*" element={<p>Page not found</p>} />
         </Routes>
       </div>

@@ -25,7 +25,7 @@ function LoginPage() {
             const response = await axios.post('http://localhost:8080/login', credentials);
             console.log('Login successful:', response.data);
             // Redirect to a protected route or homepage
-            navigate('/preadmissions');
+            navigate('/pre-admissions');
         } catch (error) {
             setError('Login failed: ' + (error.response ? error.response.data : 'Server error'));
             console.error('Login failed:', error);
