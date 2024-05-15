@@ -8,8 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Map;
 import java.util.Optional;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api")
@@ -30,12 +33,20 @@ public class AdmittedPatientController {
             AdmittedPatientModel admittedPatient = new AdmittedPatientModel(patient);
             admittedPatient.setStatus("Admitted");
 
-            // Ensure room number is provided
+            // Extract room number from payload
             String roomNumber = payload.get("room_number");
-            if (roomNumber == null || roomNumber.isEmpty()) {
+            if (roomNumber == null || roomNumber.trim().isEmpty()) {
                 return ResponseEntity.badRequest().body("Room number is required for admission.");
             }
             admittedPatient.setRoomNumber(roomNumber);
+
+            // Extract admission date from payload, convert it to LocalDate
+            String dateString = payload.get("admission_date");
+            if (dateString == null || dateString.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Admission date is required for admission.");
+            }
+            LocalDate admissionDate = LocalDate.parse(dateString);  // Assumes date is in ISO format (yyyy-MM-dd)
+            admittedPatient.setAdmissionDate(admissionDate);
 
             admittedPatientRepository.save(admittedPatient);
             patientRepository.delete(patient);

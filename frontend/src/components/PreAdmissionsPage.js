@@ -13,6 +13,12 @@ const PreAdmissionsPage = () => {
     const [selectedPatientId, setSelectedPatientId] = useState(null);
     const [showAdmitSuccessModal, setShowAdmitSuccessModal] = useState(false);
     const [selectedRoom, setSelectedRoom] = useState('');
+    const [admissionDate, setAdmissionDate] = useState('');
+
+    useEffect(() => {
+        fetchPatients(); // Call the function to fetch patients data
+        fetchAdmissions(); // Call the function to fetch admissions data
+    }, []);
 
     //Function to fetch patients
     const fetchPatients = async () => {
@@ -37,11 +43,6 @@ const PreAdmissionsPage = () => {
         }
     };
 
-    useEffect(() => {
-        fetchPatients(); // Call the function to fetch patients data
-        fetchAdmissions(); // Call the function to fetch admissions data
-    }, []);
-
     const isValidPatient = (patient) => {
         // Required fields to confirm patient is valid for admission
         return patient.status && patient.source && patient.name && patient.age &&
@@ -50,10 +51,11 @@ const PreAdmissionsPage = () => {
     };
 
     const handleAdmit = async () => {
-        if (selectedPatientId && selectedRoom) {
+        if (selectedPatientId && selectedRoom && admissionDate) {
             try {
                 const payload = {
-                    room_number: selectedRoom // Ensure this key matches what your backend expects
+                    room_number: selectedRoom,
+                    admission_date: admissionDate
                 };
                 const response = await axios.post(`http://localhost:8080/api/admit-patient/${selectedPatientId}`, payload);
                 console.log('Patient admitted:', response.data);
@@ -64,7 +66,7 @@ const PreAdmissionsPage = () => {
                 closeModal(); // Ensure modal is closed on error too
             }
         } else {
-            alert("Please select a room before confirming admission.");
+            alert("Please select a room and date before submitting.");
         }
     };
 
@@ -174,7 +176,7 @@ const PreAdmissionsPage = () => {
                 isOpen={isModalOpen}
                 onClose={closeModal}
                 onConfirm={() => handleAdmit(selectedRoom)}
-                message="Are you sure you want to admit this patient? Select a room:"
+                message="Are you sure you want to admit this patient? If so select a room and date of admission:"
                 confirmButtonText="Confirm Admission"
                 cancelButtonText="Cancel"
             >
@@ -188,6 +190,12 @@ const PreAdmissionsPage = () => {
                         <option key={room} value={room}>{room}</option>
                     ))}
                 </select>
+                <input
+                    type="date"
+                    value={admissionDate}
+                    onChange={e => setAdmissionDate(e.target.value)}
+                    style={{ margin: '10px 0', display: 'block', width: '100%' }}
+                />
             </ConfirmationModal>
             <SuccessModal
                 isOpen={showAdmitSuccessModal}

@@ -1,6 +1,7 @@
 package com.pupr.IRF.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "admitted_patients") // Specifies the table in the database
@@ -22,6 +23,8 @@ public class AdmittedPatientModel {
     private String sixtyPercentRule;
     @Column(name = "room_number")
     private String roomNumber;
+
+    private LocalDate admissionDate;
 
     // No-args constructor
     public AdmittedPatientModel() {}
@@ -144,5 +147,13 @@ public class AdmittedPatientModel {
 
     public void setRoomNumber(String roomNumber) {
         this.roomNumber = roomNumber;
+    }
+
+    public LocalDate getAdmissionDate() {
+        return admissionDate;
+    }
+
+    public void setAdmissionDate(LocalDate admissionDate) {
+        this.admissionDate = admissionDate;
     }
 }
