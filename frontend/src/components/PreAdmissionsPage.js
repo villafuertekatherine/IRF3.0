@@ -66,16 +66,12 @@ const handleAdmit = async (patientId) => {
                     <thead>
                         <tr>
                             <th>Action</th>
-                            <th>Status</th>
-                            <th>Source</th>
                             <th>Name</th>
                             <th>Age</th>
                             <th>Sex</th>
                             <th>Plan</th>
                             <th>DX</th>
-                            <th>Presented</th>
                             <th>Notes</th>
-                            <th>MSO</th>
                             <th>60% Rule</th>
                         </tr>
                     </thead>
@@ -87,16 +83,12 @@ const handleAdmit = async (patientId) => {
                                         Edit
                                     </button>
                                 </td>
-                                <td>{admission.status}</td>
-                                <td>{admission.source}</td>
                                 <td>{admission.name}</td>
                                 <td>{admission.age}</td>
                                 <td>{admission.sex}</td>
                                 <td>{admission.plan}</td>
                                 <td>{admission.dx}</td>
-                                <td>{admission.presented}</td>
                                 <td>{admission.notes}</td>
-                                <td>{admission.mso}</td>
                                 <td>{admission.sixtyPercentRule}</td>
                             </tr>
                         ))}
