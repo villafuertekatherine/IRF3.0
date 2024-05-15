@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+
 const EditPatientPage = () => {
     const { patientId } = useParams();
     const navigate = useNavigate();
@@ -32,7 +33,8 @@ const EditPatientPage = () => {
                     "Menonita Cag (MenCag)", "DCSJ", "MetroSG (MSG)"
                  ];
                  const predefinedPlans = [
-                    "SSSA", "SSSP", "MMMA", // Add other predefined plan options here
+                    "SSSA", "SSSP", "MMMA", "PMCA", "FMP", "FMA", "MCSP", "MAF", "MEDPR", "PRM",
+                    "FMV", "SSSV", "HUMA", "HUMP", "PSMP", "PSMV", "MMMV", "TRI"
                  ];
                  // Handling for source
                  if (!predefinedSources.includes(fetchedPatient.source)) {
@@ -102,7 +104,6 @@ const EditPatientPage = () => {
                     <option value="Ready">Ready</option>
                     <option value="Not Ready">Not Ready</option>
                     <option value="Discharge Home">Discharge Home</option>
-                    <option value="Admitted">Admitted</option>
                     <option value="Assigned">Assigned</option>
                 </select>
                 </label>
@@ -224,7 +225,7 @@ const EditPatientPage = () => {
                     </select>
                 </label>
                 <button type="submit">Save Changes</button>
-                <button type="button" onClick={handleDelete}>Delete Patient</button>
+                <button type="button" onClick={handleDelete} className="delete-button">Delete Patient</button>
             </form>
       </div>
     );

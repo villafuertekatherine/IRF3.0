@@ -82,5 +82,11 @@ body {
     background-color: darkred;
 }
 
+.admit-button {
+    background-color: green;
+    color: white;
+    /* Add more styling here as needed, like padding, borders, etc. */
+}
+
 
 
