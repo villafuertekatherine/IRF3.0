@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import ConfirmationModal from '../notifications/ConfirmationModal';
+import SuccessModal from '../notifications/SuccessModal';
 
 const EditPatientPage = () => {
     const { patientId } = useParams();
@@ -21,7 +22,11 @@ const EditPatientPage = () => {
         mso: '',
         sixtyPercentRule: ''
     });
+    const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
 
+    //Code for fetching patient details
     useEffect(() => {
         axios.get(`http://localhost:8080/api/patients/${patientId}`)
              .then(response => {
@@ -60,36 +65,53 @@ const EditPatientPage = () => {
     };
 
     const handleSubmit = (e) => {
-        e.preventDefault();
-
-    // Update the source field if 'Other' is selected
-    const finalPatientData = {
-       ...patient,
-       source: patient.source === 'Other' ? patient.sourceOther : patient.source,
-       plan: patient.plan === 'Other' ? patient.planOther : patient.plan
+        e.preventDefault()
+        setIsModalOpen(true); // Open the confirmation modal instead of directly submitting
     };
+
+    const handleConfirmEdit = () => {
+        // Update the source field if 'Other' is selected
+        const finalPatientData = {
+            ...patient,
+            source: patient.source === 'Other' ? patient.sourceOther : patient.source,
+            plan: patient.plan === 'Other' ? patient.planOther : patient.plan
+        };
 
         axios.put(`http://localhost:8080/api/patients/${patientId}`, finalPatientData)
              .then(() => {
-                 navigate('/pre-admissions');
+                 navigate('/pre-admissions'); // Redirect after success
+                 setIsModalOpen(false); // Close the modal
              })
              .catch(error => {
                  console.error('Failed to update patient:', error);
+                 setIsModalOpen(false); // Close the modal even on error
              });
     };
 
+    const handleCancelEdit = () => {
+        setIsModalOpen(false); // Simply close the modal on cancel
+    };
+
     const handleDelete = () => {
-        if (window.confirm("Are you sure you want to delete this patient?")) {
-            axios.delete(`http://localhost:8080/api/patients/${patientId}`)
-                .then(() => {
-                    alert("Patient has been deleted successfully.");
-                    navigate('/pre-admissions');
-                })
-                .catch(error => {
-                    console.error('Failed to delete patient:', error);
-                    alert("There was a problem deleting the patient.");
-                });
-        }
+        setIsDeleteModalOpen(true); // Open the delete confirmation modal
+    };
+
+    const handleConfirmDelete = () => {
+        axios.delete(`http://localhost:8080/api/patients/${patientId}`)
+            .then(() => {
+                setShowSuccessModal(true);  // Show success modal on successful deletion
+                setIsDeleteModalOpen(false);  // Close the delete confirmation modal
+            })
+            .catch(error => {
+                console.error('Failed to delete patient:', error);
+                alert("There was a problem deleting the patient.");
+                setIsDeleteModalOpen(false);  // Close the modal regardless of the outcome
+            });
+    };
+
+    const handleCloseSuccessModal = () => {
+        setShowSuccessModal(false);
+        navigate('/pre-admissions'); // Navigate away after confirming the success message
     };
 
     return (
@@ -227,6 +249,27 @@ const EditPatientPage = () => {
                 <button type="submit">Save Changes</button>
                 <button type="button" onClick={handleDelete} className="delete-button">Delete Patient</button>
             </form>
+            <ConfirmationModal
+                isOpen={isModalOpen}
+                onClose={handleCancelEdit}
+                onConfirm={handleConfirmEdit}
+                message="Are you sure you want to save these changes?"
+                confirmButtonText="Confirm"
+                cancelButtonText="Cancel"
+            />
+            <ConfirmationModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleConfirmDelete}
+                message="Are you sure you want to delete this possible patient record?"
+                confirmButtonText="Confirm Delete"
+                cancelButtonText="Cancel"
+            />
+            <SuccessModal
+                isOpen={showSuccessModal}
+                onClose={handleCloseSuccessModal}
+                message="Possible patient record has been deleted successfully."
+            />
       </div>
     );
 };

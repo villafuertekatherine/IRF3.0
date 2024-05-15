@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import axios from 'axios'; // Import axios to make HTTP requests
 import '../css/PreAdmissionsPage.css';
 import ConfirmationModal from '../notifications/ConfirmationModal';
+import SuccessModal from '../notifications/SuccessModal';
 
 const PreAdmissionsPage = () => {
     const navigate = useNavigate(); // Initialize navigate
@@ -10,37 +11,38 @@ const PreAdmissionsPage = () => {
     const [admissions, setAdmissions] = useState([]); // State to store admissions data
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPatientId, setSelectedPatientId] = useState(null);
+    const [showAdmitSuccessModal, setShowAdmitSuccessModal] = useState(false);
+
+    //Function to fetch patients
+    const fetchPatients = async () => {
+        console.log("Fetching patients...");
+        try {
+            const response = await axios.get('http://localhost:8080/api/patients');
+            console.log('Patients fetched:', response.data);
+            setPatients(response.data || []);
+        } catch (error) {
+            console.error('Failed to fetch patients:', error);
+        }
+    };
+
+    // Function to fetch admissions data
+    const fetchAdmissions = async () => {
+        try {
+             const response = await axios.get('http://localhost:8080/api/admissions'); // Adjust the API URL as needed
+             console.log('Admissions fetched:', response.data);
+             setAdmissions(response.data || []);
+        } catch (error) {
+             console.error('Failed to fetch admissions:', error);
+        }
+    };
 
     useEffect(() => {
-        const fetchPatients = async () => {
-            try {
-                // Function to fetch patients data
-                const response = await axios.get('http://localhost:8080/api/patients');
-                console.log('Patients fetched:', response.data);
-                setPatients(response.data || []);
-            } catch (error) {
-                console.error('Failed to fetch patients:', error);
-            }
-        };
-
-        // Function to fetch admissions data
-        const fetchAdmissions = async () => {
-            try {
-                const response = await axios.get('http://localhost:8080/api/admissions'); // Adjust the API URL as needed
-                console.log('Admissions fetched:', response.data);
-                setAdmissions(response.data);
-            } catch (error) {
-                console.error('Failed to fetch admissions:', error);
-            }
-        };
-
-        fetchPatients();
+        fetchPatients(); // Call the function to fetch patients data
         fetchAdmissions(); // Call the function to fetch admissions data
-
-    }, []); // Empty dependency array means this effect runs once on mount
+    }, []);
 
     const isValidPatient = (patient) => {
-        // Add more fields as necessary
+        // Required fields to confirm patient is valid for admission
         return patient.status && patient.source && patient.name && patient.age &&
                patient.sex && patient.plan && patient.dx && patient.presented &&
                patient.notes && patient.mso && patient.sixtyPercentRule;
@@ -51,10 +53,8 @@ const PreAdmissionsPage = () => {
             try {
                 const response = await axios.post(`http://localhost:8080/api/admit-patient/${selectedPatientId}`);
                 console.log('Patient admitted:', response.data);
-                const updatedPatients = patients.filter(patient => patient.id !== selectedPatientId);
-                setPatients(updatedPatients);
                 closeModal(); // Close the modal
-                window.location.reload(); // Refresh the page
+                setShowAdmitSuccessModal(true); // Show the success modal
             } catch (error) {
                 console.error('Failed to admit patient:', error);
                 closeModal(); // Ensure modal is closed on error too
@@ -171,6 +171,14 @@ const PreAdmissionsPage = () => {
                 message="Are you sure you want to admit this patient?"
                 confirmButtonText="Confirm Admission"
                 cancelButtonText="Cancel"
+            />
+            <SuccessModal
+                isOpen={showAdmitSuccessModal}
+                onClose={() => {
+                    setShowAdmitSuccessModal(false);
+                    window.location.reload(); // Reload the page after the modal is closed
+                }}
+                message="Patient has been admitted successfully."
             />
         </div>
     );
