@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ConfirmationModal from '../notifications/ConfirmationModal';
+import SuccessModal from '../notifications/SuccessModal';
+
 
 
 const EditAdmissionPage = () => {
     const { id } = useParams();  // Get the id from the URL
     const navigate = useNavigate();
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+
 
     const [admission, setAdmission] = useState({
         name: '',
@@ -72,8 +76,7 @@ const EditAdmissionPage = () => {
     const handleDelete = () => {
         axios.delete(`http://localhost:8080/api/admissions/${id}`)
             .then(() => {
-                alert("Admission has been deleted successfully.");
-                navigate('/pre-admissions');
+                setShowSuccessModal(true); // Show success modal
             })
             .catch(error => {
                 console.error('Failed to delete admission:', error);
@@ -173,6 +176,14 @@ const EditAdmissionPage = () => {
                 message="Are you sure you want to delete this patient record from admissions?"
                 confirmButtonText="Confirm Delete"
                 cancelButtonText="Cancel"
+            />
+            <SuccessModal
+                isOpen={showSuccessModal}
+                onClose={() => {
+                    setShowSuccessModal(false);
+                    navigate('/pre-admissions'); // Navigate after closing the modal
+                }}
+                message="Admission has been deleted successfully."
             />
       </div>
     );
