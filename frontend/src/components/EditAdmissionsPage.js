@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import ConfirmationModal from '../notifications/ConfirmationModal';
+
 
 const EditAdmissionPage = () => {
     const { id } = useParams();  // Get the id from the URL
     const navigate = useNavigate();
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
     const [admission, setAdmission] = useState({
         name: '',
         age: '',
@@ -66,22 +70,28 @@ const EditAdmissionPage = () => {
     };
 
     const handleDelete = () => {
-        if (window.confirm("Are you sure you want to delete this admission?")) {
-            axios.delete(`http://localhost:8080/api/admissions/${id}`)
-                .then(() => {
-                    alert("Admission has been deleted successfully.");
-                    navigate('/pre-admissions');
-                })
-                .catch(error => {
-                    console.error('Failed to delete admission:', error);
-                    alert("There was a problem deleting the admission.");
-                });
-        }
+        axios.delete(`http://localhost:8080/api/admissions/${id}`)
+            .then(() => {
+                alert("Admission has been deleted successfully.");
+                navigate('/pre-admissions');
+            })
+            .catch(error => {
+                console.error('Failed to delete admission:', error);
+                alert("There was a problem deleting the admission.");
+            });
+    };
+
+    const openDeleteModal = () => {
+        setIsDeleteModalOpen(true);
+    };
+
+    const closeDeleteModal = () => {
+        setIsDeleteModalOpen(false);
     };
 
     return (
         <div className="form-container">
-            <h1>Edit Admissions</h1>
+            <h1>Edit Admitted Patient Record</h1>
             <form onSubmit={handleSubmit}>
                 {/* Repeat the form fields similarly to AddPossibleAdmission, utilizing handleInputChange for updates */}
                 <label>
@@ -154,8 +164,16 @@ const EditAdmissionPage = () => {
                     </select>
                 </label>
                 <button type="submit">Save Changes</button>
-                <button type="button" onClick={handleDelete} className="delete-button">Delete Admission</button>
+                <button type="button" onClick={openDeleteModal} className="delete-button">Delete Admission</button>
             </form>
+            <ConfirmationModal
+                isOpen={isDeleteModalOpen}
+                onClose={closeDeleteModal}
+                onConfirm={handleDelete}
+                message="Are you sure you want to delete this patient record from admissions?"
+                confirmButtonText="Confirm Delete"
+                cancelButtonText="Cancel"
+            />
       </div>
     );
 };

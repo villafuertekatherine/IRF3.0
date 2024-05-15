@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import axios from 'axios'; // Import axios to make HTTP requests
 import '../css/PreAdmissionsPage.css';
-import ConfirmationModal from './ConfirmationModal';
+import ConfirmationModal from '../notifications/ConfirmationModal';
 
 const PreAdmissionsPage = () => {
     const navigate = useNavigate(); // Initialize navigate
@@ -168,6 +168,9 @@ const PreAdmissionsPage = () => {
                 isOpen={isModalOpen}
                 onClose={closeModal}
                 onConfirm={handleAdmit}
+                message="Are you sure you want to admit this patient?"
+                confirmButtonText="Confirm Admission"
+                cancelButtonText="Cancel"
             />
         </div>
     );
