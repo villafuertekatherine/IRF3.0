@@ -12,6 +12,7 @@ const PreAdmissionsPage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPatientId, setSelectedPatientId] = useState(null);
     const [showAdmitSuccessModal, setShowAdmitSuccessModal] = useState(false);
+    const [selectedRoom, setSelectedRoom] = useState('');
 
     //Function to fetch patients
     const fetchPatients = async () => {
@@ -49,9 +50,12 @@ const PreAdmissionsPage = () => {
     };
 
     const handleAdmit = async () => {
-        if (selectedPatientId) {
+        if (selectedPatientId && selectedRoom) {
             try {
-                const response = await axios.post(`http://localhost:8080/api/admit-patient/${selectedPatientId}`);
+                const payload = {
+                    room_number: selectedRoom // Ensure this key matches what your backend expects
+                };
+                const response = await axios.post(`http://localhost:8080/api/admit-patient/${selectedPatientId}`, payload);
                 console.log('Patient admitted:', response.data);
                 closeModal(); // Close the modal
                 setShowAdmitSuccessModal(true); // Show the success modal
@@ -59,6 +63,8 @@ const PreAdmissionsPage = () => {
                 console.error('Failed to admit patient:', error);
                 closeModal(); // Ensure modal is closed on error too
             }
+        } else {
+            alert("Please select a room before confirming admission.");
         }
     };
 
@@ -167,11 +173,22 @@ const PreAdmissionsPage = () => {
             <ConfirmationModal
                 isOpen={isModalOpen}
                 onClose={closeModal}
-                onConfirm={handleAdmit}
-                message="Are you sure you want to admit this patient?"
+                onConfirm={() => handleAdmit(selectedRoom)}
+                message="Are you sure you want to admit this patient? Select a room:"
                 confirmButtonText="Confirm Admission"
                 cancelButtonText="Cancel"
-            />
+            >
+                <select
+                    value={selectedRoom}
+                    onChange={e => setSelectedRoom(e.target.value)}
+                    style={{ margin: '10px 0', display: 'block', width: '100%' }}
+                >
+                    <option value="">Select a Room</option>
+                    {Array.from({ length: 20 }, (_, i) => 480 + i).map(room => (
+                        <option key={room} value={room}>{room}</option>
+                    ))}
+                </select>
+            </ConfirmationModal>
             <SuccessModal
                 isOpen={showAdmitSuccessModal}
                 onClose={() => {

@@ -20,6 +20,8 @@ public class AdmittedPatientModel {
     private String notes;
     private String mso; // Managed Service Organization
     private String sixtyPercentRule;
+    @Column(name = "room_number")
+    private String roomNumber;
 
     // No-args constructor
     public AdmittedPatientModel() {}
@@ -134,5 +136,13 @@ public class AdmittedPatientModel {
 
     public void setSixtyPercentRule(String sixtyPercentRule) {
         this.sixtyPercentRule = sixtyPercentRule;
+    }
+
+    public String getRoomNumber() {
+        return roomNumber;
+    }
+
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
     }
 }

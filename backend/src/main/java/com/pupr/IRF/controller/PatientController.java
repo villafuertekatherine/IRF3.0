@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
@@ -86,25 +87,4 @@ public class PatientController {
             return ResponseEntity.notFound().build();  // Patient not found
         }
     }
-
-    @Transactional
-    @PostMapping("/admit-patient/{id}")
-    public ResponseEntity<?> admitPatient(@PathVariable Long id) {
-        Optional<PatientModel> patientOptional = patientRepository.findById(id);
-        if (patientOptional.isPresent()) {
-            PatientModel patient = patientOptional.get();
-
-            // Create a new admitted patient model from the existing patient model
-            AdmittedPatientModel admittedPatient = new AdmittedPatientModel(patient);
-            admittedPatient.setStatus("Admitted"); // Explicitly setting the status to 'Admitted'
-
-            admittedPatientRepository.save(admittedPatient); // Save to admitted patients table
-            patientRepository.delete(patient); // Remove from possible patients table
-
-            return ResponseEntity.ok(admittedPatient);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
 }
