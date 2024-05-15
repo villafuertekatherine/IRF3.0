@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import axios from 'axios'; // Import axios to make HTTP requests
 import '../css/PreAdmissionsPage.css';
+import ConfirmationModal from './ConfirmationModal';
 
 const PreAdmissionsPage = () => {
     const navigate = useNavigate(); // Initialize navigate
     const [patients, setPatients] = useState([]); // State to store patients data
     const [admissions, setAdmissions] = useState([]); // State to store admissions data
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedPatientId, setSelectedPatientId] = useState(null);
 
     useEffect(() => {
         const fetchPatients = async () => {
@@ -43,19 +46,31 @@ const PreAdmissionsPage = () => {
                patient.notes && patient.mso && patient.sixtyPercentRule;
     };
 
-const handleAdmit = async (patientId) => {
-    try {
-        // Call the API to admit the patient
-        const response = await axios.post(`http://localhost:8080/api/admit-patient/${patientId}`);
-        console.log('Patient admitted:', response.data);
+    const handleAdmit = async () => {
+        if (selectedPatientId) {
+            try {
+                const response = await axios.post(`http://localhost:8080/api/admit-patient/${selectedPatientId}`);
+                console.log('Patient admitted:', response.data);
+                const updatedPatients = patients.filter(patient => patient.id !== selectedPatientId);
+                setPatients(updatedPatients);
+                closeModal(); // Close the modal
+                window.location.reload(); // Refresh the page
+            } catch (error) {
+                console.error('Failed to admit patient:', error);
+                closeModal(); // Ensure modal is closed on error too
+            }
+        }
+    };
 
-        // Update the local state to remove the patient from the list
-        const updatedPatients = patients.filter(patient => patient.id !== patientId);
-        setPatients(updatedPatients);
-    } catch (error) {
-        console.error('Failed to admit patient:', error);
-    }
-};
+    const openModal = (patientId) => {
+        setSelectedPatientId(patientId);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
+
     return (
         <div className="page-container">
             <h1>Pre-Admissions Page</h1>
@@ -126,7 +141,7 @@ const handleAdmit = async (patientId) => {
                                     {isValidPatient(patient) && (
                                         <button
                                             className="admit-button"
-                                            onClick={() => handleAdmit(patient.id)}>
+                                            onClick={() => openModal(patient.id)}>
                                             Admit
                                         </button>
                                     )}
@@ -148,6 +163,12 @@ const handleAdmit = async (patientId) => {
                     </tbody>
                 </table>
             </section>
+            {/* Modal Component */}
+            <ConfirmationModal
+                isOpen={isModalOpen}
+                onClose={closeModal}
+                onConfirm={handleAdmit}
+            />
         </div>
     );
 };
