@@ -89,6 +89,8 @@ const PreAdmissionsPage = () => {
                     <thead>
                         <tr>
                             <th>Action</th>
+                            <th>Room</th>
+                            <th>Admission Date</th>
                             <th>Name</th>
                             <th>Age</th>
                             <th>Sex</th>
@@ -106,6 +108,8 @@ const PreAdmissionsPage = () => {
                                         Edit
                                     </button>
                                 </td>
+                                <td>{admission.roomNumber}</td>
+                                <td>{admission.admissionDate}</td>
                                 <td>{admission.name}</td>
                                 <td>{admission.age}</td>
                                 <td>{admission.sex}</td>

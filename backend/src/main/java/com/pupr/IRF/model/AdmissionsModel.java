@@ -2,6 +2,8 @@ package com.pupr.IRF.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "admitted_patients") // Specify the table name
 public class AdmissionsModel {
@@ -19,6 +21,10 @@ public class AdmissionsModel {
     private String notes;
     private String mso; // Managed Service Organization
     private String sixtyPercentRule;
+    @Column(name = "room_number")
+    private String roomNumber;
+
+    private LocalDate admissionDate;
 
     // Getters and setters
     public Long getId() {
@@ -115,5 +121,21 @@ public class AdmissionsModel {
 
     public void setSixtyPercentRule(String sixtyPercentRule) {
         this.sixtyPercentRule = sixtyPercentRule;
+    }
+
+    public String getRoomNumber() {
+        return roomNumber;
+    }
+
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
+    }
+
+    public LocalDate getAdmissionDate() {
+        return admissionDate;
+    }
+
+    public void setAdmissionDate(LocalDate admissionDate) {
+        this.admissionDate = admissionDate;
     }
 }
