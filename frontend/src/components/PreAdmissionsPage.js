@@ -15,6 +15,8 @@ const PreAdmissionsPage = () => {
     const [showAdmitSuccessModal, setShowAdmitSuccessModal] = useState(false);
     const [selectedRoom, setSelectedRoom] = useState('');
     const [admissionDate, setAdmissionDate] = useState('');
+    const [weekStartDate, setWeekStartDate] = useState('');
+    const [weekEndDate, setWeekEndDate] = useState('');
 
     useEffect(() => {
         const fetchPatients = async () => {
@@ -28,6 +30,8 @@ const PreAdmissionsPage = () => {
 
         const fetchAdmissionsWithDates = async () => {
             const { startDate, endDate } = location.state;
+            setWeekStartDate(startDate);
+            setWeekEndDate(endDate);
             try {
                 const response = await axios.get('http://localhost:8080/api/admissions/date-range', {
                     params: { startDate, endDate }
@@ -84,6 +88,9 @@ const PreAdmissionsPage = () => {
             <h1>Pre-Admissions Page</h1>
             <section>
                 <h2>Admissions</h2>
+                {weekStartDate && weekEndDate && (
+                    <p>Showing admissions from {weekStartDate} to {weekEndDate}</p>
+                )}
                 <table>
                     <thead>
                         <tr>
