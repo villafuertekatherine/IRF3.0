@@ -6,9 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -39,6 +40,7 @@ public class AdmissionsController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @PutMapping("/admissions/{id}")
     public ResponseEntity<AdmissionsModel> updateAdmission(@PathVariable Long id, @RequestBody AdmissionsModel admissionDetails) {
         AdmissionsModel updatedAdmission = admissionsService.updateAdmission(id, admissionDetails);
@@ -56,6 +58,22 @@ public class AdmissionsController {
             return ResponseEntity.ok().build();  // Successfully deleted
         } else {
             return ResponseEntity.notFound().build();  // Admission not found
+        }
+    }
+
+    // New endpoint to get admissions within a date range
+    @GetMapping("/admissions/date-range")
+    public ResponseEntity<List<AdmissionsModel>> getAdmissionsByDateRange(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        try {
+            List<AdmissionsModel> admissions = admissionsService.findAdmissionsByDateRange(startDate, endDate);
+            if (admissions.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(admissions);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
