@@ -11,6 +11,7 @@ import PreAdmissionsPage from './components/PreAdmissionsPage';
 import AddPossibleAdmission from './components/AddPossibleAdmission';
 import EditPatientPage from './components/EditPatientPage';
 import EditAdmissionsPage from './components/EditAdmissionsPage';
+import HomePage from './components/HomePage';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/add-possible-admission" element={<AddPossibleAdmission />} />
           <Route path="/edit-patient/:patientId" element={<EditPatientPage />} />
           <Route path="/edit-admission/:id" element={<EditAdmissionsPage />} />
+          <Route path="/home" element={<HomePage />} />
           <Route path="*" element={<p>Page not found</p>} />
         </Routes>
       </div>

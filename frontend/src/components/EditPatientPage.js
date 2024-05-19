@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ConfirmationModal from '../notifications/ConfirmationModal';
 import SuccessModal from '../notifications/SuccessModal';
+import '../css/EditPatientPage.css';
 
 const EditPatientPage = () => {
     const { patientId } = useParams();
@@ -116,7 +117,7 @@ const EditPatientPage = () => {
 
     return (
         <div className="form-container">
-            <h1>Edit Patient</h1>
+            <h1>Edit Possible Patient Record</h1>
             <form onSubmit={handleSubmit}>
                 {/* Repeat the form fields similarly to AddPossibleAdmission, utilizing handleInputChange for updates */}
                 <label>

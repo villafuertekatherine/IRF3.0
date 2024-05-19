@@ -3,15 +3,19 @@
     padding: 20px;
     background-color: #f4f4f9;
     min-height: 100vh;
-    background-image: url('./Landing Page - Background.webp'); /* Ensure the path is relative to the CSS file */
+    background-image: url('./Landing Page - Background.webp');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    color: #333; /* Default text color */
+    font-family: Arial, sans-serif; /* Consistent font style */
 }
 
 h1 {
-    color: #333;
+    font-size: 2em; /* Responsive font size */
+    color: #0056b3; /* Consistent theme color */
     text-align: center;
+    margin-bottom: 20px;
 }
 
 /* Styles for buttons */
@@ -19,10 +23,11 @@ button {
     background-color: #007bff;
     color: white;
     border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
+    padding: 10px 20px;
+    border-radius: 5px;
     cursor: pointer;
-    margin-right: 10px;
+    font-size: 1em;
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
 }
 
 button:hover {
@@ -42,7 +47,7 @@ table, th, td {
 
 th, td {
     text-align: left;
-    padding: 8px;
+    padding: 12px; /* Slightly larger padding for better readability */
 }
 
 th {
@@ -61,8 +66,23 @@ tbody tr:hover {
 /* Section styling */
 section {
     background-color: white;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-top: 20px;
+    padding: 20px;
+    border-radius: 10px; /* Slightly larger radius for a softer look */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Larger shadow for more depth */
+    margin-top: 30px;
+}
+
+@media (max-width: 768px) {
+    /* Responsive styles */
+    th, td {
+        padding: 10px; /* Adjust padding in smaller screens */
+    }
+
+    button {
+        padding: 8px 15px; /* Smaller buttons on mobile */
+    }
+
+    .page-container {
+        padding: 10px; /* Less padding on smaller screens */
+    }
 }
