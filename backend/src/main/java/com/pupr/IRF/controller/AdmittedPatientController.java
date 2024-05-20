@@ -8,10 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -31,8 +29,7 @@ public class AdmittedPatientController {
         Optional<PatientModel> patientOptional = patientRepository.findById(id);
         if (patientOptional.isPresent()) {
             PatientModel patient = patientOptional.get();
-            AdmittedPatientModel admittedPatient = new AdmittedPatientModel(patient);
-            admittedPatient.setStatus("Admitted");
+            AdmittedPatientModel admittedPatient = new AdmittedPatientModel(patient, "Admitted");
 
             // Extract room number from payload
             String roomNumber = payload.get("room_number");
@@ -41,17 +38,39 @@ public class AdmittedPatientController {
             }
             admittedPatient.setRoomNumber(roomNumber);
 
-            // Extract admission date from payload, convert it to LocalDate
-            String dateString = payload.get("admission_date");
-            if (dateString == null || dateString.trim().isEmpty()) {
-                return ResponseEntity.badRequest().body("Admission date is required for admission.");
-            }
-            LocalDate admissionDate = LocalDate.parse(dateString);  // Assumes date is in ISO format (yyyy-MM-dd)
+            // Copy the admission date from the patient
+            LocalDate admissionDate = patient.getAdmissionDate();
             admittedPatient.setAdmissionDate(admissionDate);
 
+            // Save the admitted patient
             admittedPatientRepository.save(admittedPatient);
             patientRepository.delete(patient);
             return ResponseEntity.ok(admittedPatient);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/assign-patient/{id}")
+    public ResponseEntity<?> assignPatient(@PathVariable Long id, @RequestBody Map<String, String> payload) {
+        Optional<PatientModel> patientOptional = patientRepository.findById(id);
+        if (patientOptional.isPresent()) {
+            PatientModel patient = patientOptional.get();
+
+            // Extract admission date from payload, convert it to LocalDate
+            String dateString = payload.get("admission_date");
+            if (dateString == null || dateString.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Admission date is required for assignment.");
+            }
+            LocalDate admissionDate = LocalDate.parse(dateString);
+            patient.setAdmissionDate(admissionDate);
+            patient.setAssigned(true);
+
+            // Update status to include admission date
+            patient.setStatus("Assigned to " + admissionDate.toString());
+
+            patientRepository.save(patient);
+            return ResponseEntity.ok(patient);
         } else {
             return ResponseEntity.notFound().build();
         }

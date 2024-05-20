@@ -55,7 +55,6 @@ const AddPossibleAdmission = () => {
                             <option value="Ready">Ready</option>
                             <option value="Not Ready">Not Ready</option>
                             <option value="Discharge Home">Discharge Home</option>
-                            <option value="Assigned">Assigned</option>
                         </select>
                     </label>
                    <label>

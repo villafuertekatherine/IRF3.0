@@ -11,6 +11,7 @@ const PreAdmissionsPage = () => {
     const [patients, setPatients] = useState([]);
     const [admissions, setAdmissions] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
     const [selectedPatientId, setSelectedPatientId] = useState(null);
     const [showAdmitSuccessModal, setShowAdmitSuccessModal] = useState(false);
     const [selectedRoom, setSelectedRoom] = useState('');
@@ -56,11 +57,10 @@ const PreAdmissionsPage = () => {
     };
 
     const handleAdmit = async () => {
-        if (selectedPatientId && selectedRoom && admissionDate) {
+        if (selectedPatientId && selectedRoom) {
             try {
                 const payload = {
-                    room_number: selectedRoom,
-                    admission_date: admissionDate
+                    room_number: selectedRoom
                 };
                 await axios.post(`http://localhost:8080/api/admit-patient/${selectedPatientId}`, payload);
                 closeModal();
@@ -70,7 +70,25 @@ const PreAdmissionsPage = () => {
                 closeModal();
             }
         } else {
-            alert("Please select a room and date before submitting.");
+            alert("Please select a room before submitting.");
+        }
+    };
+
+    const handleAssign = async () => {
+        if (selectedPatientId && admissionDate) {
+            try {
+                const payload = {
+                    admission_date: admissionDate
+                };
+                await axios.post(`http://localhost:8080/api/assign-patient/${selectedPatientId}`, payload);
+                closeAssignModal();
+                setShowAdmitSuccessModal(true);
+            } catch (error) {
+                console.error('Failed to assign patient:', error);
+                closeAssignModal();
+            }
+        } else {
+            alert("Please select a date before submitting.");
         }
     };
 
@@ -79,8 +97,17 @@ const PreAdmissionsPage = () => {
         setIsModalOpen(true);
     };
 
+    const openAssignModal = (patientId) => {
+        setSelectedPatientId(patientId);
+        setIsAssignModalOpen(true);
+    };
+
     const closeModal = () => {
         setIsModalOpen(false);
+    };
+
+    const closeAssignModal = () => {
+        setIsAssignModalOpen(false);
     };
 
     return (
@@ -154,9 +181,16 @@ const PreAdmissionsPage = () => {
                                 <td>
                                     <button onClick={() => navigate(`/edit-patient/${patient.id}`)}>Edit</button>
                                     {isValidPatient(patient) && (
-                                        <button className="admit-button" onClick={() => openModal(patient.id)}>
-                                            Admit
-                                        </button>
+                                        <>
+                                            <button className="assign-button" onClick={() => openAssignModal(patient.id)}>
+                                                Assign
+                                            </button>
+                                            {patient.assigned && (
+                                                <button className="admit-button" onClick={() => openModal(patient.id)}>
+                                                    Admit
+                                                </button>
+                                            )}
+                                        </>
                                     )}
                                 </td>
                                 <td>{patient.status}</td>
@@ -178,8 +212,8 @@ const PreAdmissionsPage = () => {
             <ConfirmationModal
                 isOpen={isModalOpen}
                 onClose={closeModal}
-                onConfirm={() => handleAdmit(selectedRoom)}
-                message="Are you sure you want to admit this patient? If so select a room and date of admission:"
+                onConfirm={handleAdmit}
+                message="Are you sure you want to admit this patient? If so select a room:"
                 confirmButtonText="Confirm Admission"
                 cancelButtonText="Cancel"
             >
@@ -193,6 +227,15 @@ const PreAdmissionsPage = () => {
                         <option key={room} value={room}>{room}</option>
                     ))}
                 </select>
+            </ConfirmationModal>
+            <ConfirmationModal
+                isOpen={isAssignModalOpen}
+                onClose={closeAssignModal}
+                onConfirm={handleAssign}
+                message="Are you sure you want to assign this patient? If so select a date of admission:"
+                confirmButtonText="Confirm Assignment"
+                cancelButtonText="Cancel"
+            >
                 <input
                     type="date"
                     value={admissionDate}
@@ -206,7 +249,7 @@ const PreAdmissionsPage = () => {
                     setShowAdmitSuccessModal(false);
                     window.location.reload();
                 }}
-                message="Patient has been admitted successfully."
+                message="Patient has been admitted/assigned successfully."
             />
         </div>
     );

@@ -21,7 +21,8 @@ const EditPatientPage = () => {
         presented: '',
         notes: '',
         mso: '',
-        sixtyPercentRule: ''
+        sixtyPercentRule: '',
+        admissionDate: ''
     });
     const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -119,16 +120,23 @@ const EditPatientPage = () => {
         <div className="form-container">
             <h1>Edit Possible Patient Record</h1>
             <form onSubmit={handleSubmit}>
-                {/* Repeat the form fields similarly to AddPossibleAdmission, utilizing handleInputChange for updates */}
                 <label>
-                Status:
-                <select name="status" value={patient.status} onChange={handleInputChange}>
-                    <option value="" disabled>Select Option</option>
-                    <option value="Ready">Ready</option>
-                    <option value="Not Ready">Not Ready</option>
-                    <option value="Discharge Home">Discharge Home</option>
-                    <option value="Assigned">Assigned</option>
-                </select>
+                    Status:
+                    {patient.assigned ? (
+                        <input
+                            type="text"
+                            name="status"
+                            value={`Assigned to ${patient.admissionDate}`}
+                            readOnly
+                        />
+                    ) : (
+                        <select name="status" value={patient.status} onChange={handleInputChange}>
+                            <option value="" disabled>Select Option</option>
+                            <option value="Ready">Ready</option>
+                            <option value="Not Ready">Not Ready</option>
+                            <option value="Discharge Home">Discharge Home</option>
+                        </select>
+                    )}
                 </label>
                 <label>
                     Source:

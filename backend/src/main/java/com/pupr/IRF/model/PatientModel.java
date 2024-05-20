@@ -1,9 +1,10 @@
 package com.pupr.IRF.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "possible_patients")  // Specify the table name here
+@Table(name = "possible_patients")
 public class PatientModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,8 +20,30 @@ public class PatientModel {
     private String notes;
     private String mso;
     private String sixtyPercentRule;
+    private boolean assigned = false;
+    private LocalDate admissionDate; // Add this line
 
     // Standard getters and setters
+
+    // Getter and setter for admissionDate
+    public LocalDate getAdmissionDate() {
+        return admissionDate;
+    }
+
+    public void setAdmissionDate(LocalDate admissionDate) {
+        this.admissionDate = admissionDate;
+    }
+
+    // Getter and setter for assigned
+    public boolean isAssigned() {
+        return assigned;
+    }
+
+    public void setAssigned(boolean assigned) {
+        this.assigned = assigned;
+    }
+
+    // Other getters and setters...
     public Long getId() {
         return id;
     }
@@ -53,11 +76,11 @@ public class PatientModel {
         this.name = name;
     }
 
-    public Integer getAge() {  // Getter for age
+    public Integer getAge() {
         return age;
     }
 
-    public void setAge(Integer age) {  // Setter for age
+    public void setAge(Integer age) {
         this.age = age;
     }
 
@@ -117,4 +140,3 @@ public class PatientModel {
         this.sixtyPercentRule = sixtyPercentRule;
     }
 }
-

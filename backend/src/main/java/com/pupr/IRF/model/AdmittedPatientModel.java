@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "admitted_patients") // Specifies the table in the database
+@Table(name = "admitted_patients")
 public class AdmittedPatientModel {
 
     @Id
@@ -30,12 +30,12 @@ public class AdmittedPatientModel {
     public AdmittedPatientModel() {}
 
     // Constructor to create AdmittedPatientModel from PatientModel
-    public AdmittedPatientModel(PatientModel patient) {
+    public AdmittedPatientModel(PatientModel patient, String status) {
         this.name = patient.getName();
         this.age = patient.getAge();
         this.sex = patient.getSex();
         this.source = patient.getSource();
-        this.status = "Admitted"; // Set status to 'Admitted'
+        this.status = status; // Set status dynamically
         this.plan = patient.getPlan();
         this.dx = patient.getDx();
         this.presented = patient.getPresented();
