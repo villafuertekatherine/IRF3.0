@@ -60,13 +60,15 @@ const PreAdmissionsPage = () => {
         if (selectedPatientId && selectedRoom) {
             try {
                 const payload = {
-                    room_number: selectedRoom
+                    room_number: selectedRoom,
+                    admission_date: new Date().toISOString().split('T')[0]  // Use today's date for simplicity
                 };
                 await axios.post(`http://localhost:8080/api/admit-patient/${selectedPatientId}`, payload);
                 closeModal();
                 setShowAdmitSuccessModal(true);
             } catch (error) {
                 console.error('Failed to admit patient:', error);
+                alert(error.response?.data || 'Failed to admit patient. Please try again.');
                 closeModal();
             }
         } else {

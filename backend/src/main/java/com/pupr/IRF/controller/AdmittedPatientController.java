@@ -38,11 +38,19 @@ public class AdmittedPatientController {
             }
             admittedPatient.setRoomNumber(roomNumber);
 
-            // Copy the admission date from the patient
-            LocalDate admissionDate = patient.getAdmissionDate();
+            // Extract admission date from payload, convert it to LocalDate
+            LocalDate admissionDate = patient.getAdmissionDate();  // Get the admission date from patient
+            if (admissionDate == null) {
+                return ResponseEntity.badRequest().body("Admission date is required for admission.");
+            }
+
+            // Check if the room is available
+            if (!admittedPatientRepository.findOccupiedRooms(roomNumber, admissionDate).isEmpty()) {
+                return ResponseEntity.badRequest().body("The selected room is occupied on the specified date.");
+            }
+
             admittedPatient.setAdmissionDate(admissionDate);
 
-            // Save the admitted patient
             admittedPatientRepository.save(admittedPatient);
             patientRepository.delete(patient);
             return ResponseEntity.ok(admittedPatient);
@@ -63,10 +71,8 @@ public class AdmittedPatientController {
                 return ResponseEntity.badRequest().body("Admission date is required for assignment.");
             }
             LocalDate admissionDate = LocalDate.parse(dateString);
-            patient.setAdmissionDate(admissionDate);
             patient.setAssigned(true);
-
-            // Update status to include admission date
+            patient.setAdmissionDate(admissionDate);
             patient.setStatus("Assigned to " + admissionDate.toString());
 
             patientRepository.save(patient);

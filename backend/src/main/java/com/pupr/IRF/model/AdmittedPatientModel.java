@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "admitted_patients")
+@Table(name = "admitted_patients") // Specifies the table in the database
 public class AdmittedPatientModel {
 
     @Id
@@ -26,6 +26,8 @@ public class AdmittedPatientModel {
 
     private LocalDate admissionDate;
 
+    private LocalDate dischargeDate; // Add this line
+
     // No-args constructor
     public AdmittedPatientModel() {}
 
@@ -35,7 +37,7 @@ public class AdmittedPatientModel {
         this.age = patient.getAge();
         this.sex = patient.getSex();
         this.source = patient.getSource();
-        this.status = status; // Set status dynamically
+        this.status = status;
         this.plan = patient.getPlan();
         this.dx = patient.getDx();
         this.presented = patient.getPresented();
@@ -155,5 +157,13 @@ public class AdmittedPatientModel {
 
     public void setAdmissionDate(LocalDate admissionDate) {
         this.admissionDate = admissionDate;
+    }
+
+    public LocalDate getDischargeDate() {
+        return dischargeDate;
+    }
+
+    public void setDischargeDate(LocalDate dischargeDate) {
+        this.dischargeDate = dischargeDate;
     }
 }
